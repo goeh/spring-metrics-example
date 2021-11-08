@@ -27,7 +27,7 @@ public class HelloController {
     @GetMapping("/")
     public Map<String, Object> index() {
 
-        Counter.builder("http_requests_total").description("Http Request Total").tags("method", "GET", "handler",
+        Counter.builder("http.requests.total").description("Http Request Total").tags("method", "GET", "handler",
                 "/", "status", "200").register(registry).increment();
 
         return Map.of("message", "Hello");
@@ -37,21 +37,21 @@ public class HelloController {
     public Map<String, Object> hello() {
         long startTime = System.nanoTime();
 
-        Counter.builder("http_requests_total")
+        Counter.builder("http.requests.total")
                 .description("Http Request Total")
                 .tags("method", "GET", "handler", "/hello", "status", "200")
                 .register(registry).increment();
 
-        Gauge.builder("queue_length", () -> new Random().nextInt(10) + 100)
+        Gauge.builder("queue.length", () -> new Random().nextInt(10) + 100)
                 .register(registry);
 
-        Timer.builder("hello_latency")
+        Timer.builder("hello.latency")
                 .description("Time it takes to process the hello function")
                 .tags("env", "demo")
                 .register(registry)
                 .record(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
 
-        DistributionSummary.builder("hello_summary")
+        DistributionSummary.builder("hello.summary")
                 .register(registry)
                 .record(new Random().nextInt(10) * 10 + 30);
 
