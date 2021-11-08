@@ -3,7 +3,7 @@
 This project is a minimal example on how to add application metrics to a Spring Application (not Spring Boot)
 using [Micrometer](https://micrometer.io) and [Prometheus](https://prometheus.io).
 
-Step 1: Add Micrometer+Promethes dependency.
+Step 1: Add Micrometer+Prometheus dependency.
 
 ```xml
 
@@ -13,34 +13,34 @@ Step 1: Add Micrometer+Promethes dependency.
 </dependency>
 ```
 
-Step 2: Create `PrometheusMeterRegistry` bean.
+Step 2: Create a `PrometheusMeterRegistry` bean.
 
 ```java
 @Bean
-public PrometheusMeterRegistry prometheusMeterRegistry(){
-final PrometheusMeterRegistry registry=new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
-        new JvmMemoryMetrics().bindTo(registry);
-        return registry;
-        }
+public PrometheusMeterRegistry prometheusMeterRegistry() {
+    final PrometheusMeterRegistry registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+    new JvmMemoryMetrics().bindTo(registry);
+    return registry;
+}
 ```
 
 Step 3: Inject bean into target class and add custom metrics.
 
 ```java
 Counter.builder("http.requests.total")
-        .description("Http Request Total")
-        .tags("method","GET","handler","/hello","status","200")
-        .register(registry).increment();
+    .description("Http Request Total")
+    .tags("method","GET","handler","/hello","status","200")
+    .register(registry).increment();
 ```
 
 Step 4: Configure **Prometheus** to scrape the `/metrics` endpoint.
 
-```xml
+```yaml
 scrape_configs:
-        - job_name: myapp
-        static_configs:
-        - targets: ['localhost:8080']
-        metrics_path: /metrics
+  - job_name: myapp
+    static_configs:
+      - targets: ['localhost:8080']
+    metrics_path: /metrics
 ```
 
 Done!
